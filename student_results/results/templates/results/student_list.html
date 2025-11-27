@@ -1,0 +1,181 @@
+{% extends 'results/base.html' %}
+
+{% block title %}Students A- Student Result Management System{% endblock %}
+
+{% block extra_css %}
+<style>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .page-header h1 {
+        color: white;
+        margin: 0;
+    }
+
+    .search-box {
+        display: flex;
+        gap: 0.5rem;
+        flex: 1;
+        max-width: 500px;
+    }
+
+    .search-input {
+        flex: 1;
+        padding: 0.8rem 1rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+    }
+
+    .search-btn {
+        padding: 0.8rem 1.5rem;
+        background: #28a745;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+    .students-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .student-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+
+    .student-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .student-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: white;
+        margin: 0 auto 1rem;
+        font-weight: bold;
+    }
+
+    .student-id {
+        text-align: center;
+        color: #667eea;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .student-name {
+        text-align: center;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+
+    .student-email {
+        text-align: center;
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .student-phone {
+        text-align: center;
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .no-results {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: white;
+    }
+
+    .no-results-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .page-header {
+            flex-direction: column;
+        }
+
+        .search-box {
+            width: 100%;
+            max-width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>👥 All Students</h1>
+    {% if user.is_authenticated %}
+    <a href="{% url 'student_create' %}" class="btn btn-success">+ Add New Student</a>
+    {% endif %}
+</div>
+
+<div class="card">
+    <form method="get" action="{% url 'student_list' %}">
+        <div class="search-box">
+            <input 
+                type="text" 
+                name="search" 
+                class="search-input" 
+                placeholder="Search by ID, name, or email..."
+                value="{{ search_query }}"
+            >
+            <button type="submit" class="search-btn">🔍 Search</button>
+        </div>
+    </form>
+</div>
+
+{% if students %}
+<div class="students-grid">
+    {% for student in students %}
+    <a href="{% url 'student_detail' student.student_id %}" class="student-card">
+        <div class="student-avatar">
+            {{ student.first_name.0 }}{{ student.last_name.0 }}
+        </div>
+        <div class="student-id">{{ student.student_id }}</div>
+        <div class="student-name">{{ student.get_full_name }}</div>
+        <div class="student-email">📧 {{ student.email }}</div>
+        <div class="student-phone">📱 {{ student.phone }}</div>
+    </a>
+    {% endfor %}
+</div>
+{% else %}
+<div class="no-results">
+    <div class="no-results-icon">🔍</div>
+    <h2>No Students Found</h2>
+    <p>{% if search_query %}No students match your search criteria.{% else %}No students have been added yet.{% endif %}</p>
+    {% if user.is_authenticated %}
+    <a href="{% url 'student_create' %}" class="btn btn-primary" style="margin-top: 1rem;">Add First Student</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

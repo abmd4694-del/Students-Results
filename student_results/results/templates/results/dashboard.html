@@ -1,0 +1,231 @@
+{% extends 'results/base.html' %}
+
+{% block title %}Dashboard - Student Result Management System{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-header {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .dashboard-header h1 {
+        color: #667eea;
+        margin-bottom: 0.5rem;
+    }
+
+    .quick-actions {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .action-btn {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        text-align: center;
+        text-decoration: none;
+        color: #333;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s;
+    }
+
+    .action-btn:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .action-btn-icon {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .action-btn-text {
+        font-weight: 600;
+        color: #667eea;
+    }
+
+    .stats-overview {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-box {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .stat-box-number {
+        font-size: 3rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-box-label {
+        font-size: 1.1rem;
+        opacity: 0.9;
+    }
+
+    .recent-results {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .recent-results h2 {
+        color: #667eea;
+        margin-bottom: 1.5rem;
+    }
+
+    .results-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .results-table th {
+        background: #f8f9fa;
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        color: #333;
+        border-bottom: 2px solid #e0e0e0;
+    }
+
+    .results-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .results-table tr:hover {
+        background: #f8f9fa;
+    }
+
+    .grade-badge {
+        display: inline-block;
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .grade-A\+, .grade-A, .grade-A- {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .grade-B\+, .grade-B, .grade-B- {
+        background: #cce5ff;
+        color: #004085;
+    }
+
+    .grade-C\+, .grade-C {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .grade-D, .grade-F {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    @media (max-width: 768px) {
+        .results-table {
+            font-size: 0.9rem;
+        }
+
+        .results-table th,
+        .results-table td {
+            padding: 0.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>👋 Welcome, {{ user.get_full_name|default:user.username }}!</h1>
+    <p style="color: #666;">Manage students, courses, and results from your dashboard</p>
+</div>
+
+<div class="quick-actions">
+    <a href="{% url 'student_create' %}" class="action-btn">
+        <div class="action-btn-icon">➕</div>
+        <div class="action-btn-text">Add Student</div>
+    </a>
+    <a href="{% url 'course_create' %}" class="action-btn">
+        <div class="action-btn-icon">📚</div>
+        <div class="action-btn-text">Add Course</div>
+    </a>
+    <a href="{% url 'result_create' %}" class="action-btn">
+        <div class="action-btn-icon">📝</div>
+        <div class="action-btn-text">Enter Result</div>
+    </a>
+    <a href="{% url 'student_list' %}" class="action-btn">
+        <div class="action-btn-icon">👥</div>
+        <div class="action-btn-text">View Students</div>
+    </a>
+</div>
+
+<div class="stats-overview">
+    <div class="stat-box">
+        <div class="stat-box-number">{{ total_students }}</div>
+        <div class="stat-box-label">Total Students</div>
+    </div>
+    <div class="stat-box">
+        <div class="stat-box-number">{{ total_courses }}</div>
+        <div class="stat-box-label">Total Courses</div>
+    </div>
+    <div class="stat-box">
+        <div class="stat-box-number">{{ total_results }}</div>
+        <div class="stat-box-label">Results Recorded</div>
+    </div>
+</div>
+
+<div class="recent-results">
+    <h2>📊 Recent Results</h2>
+    {% if recent_results %}
+    <div style="overflow-x: auto;">
+        <table class="results-table">
+            <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Course</th>
+                    <th>Marks</th>
+                    <th>Grade</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in recent_results %}
+                <tr>
+                    <td>
+                        <a href="{% url 'student_detail' result.student.student_id %}" 
+                           style="color: #667eea; text-decoration: none; font-weight: 500;">
+                            {{ result.student.get_full_name }}
+                        </a>
+                    </td>
+                    <td>{{ result.course.course_name }}</td>
+                    <td>{{ result.marks }}</td>
+                    <td><span class="grade-badge grade-{{ result.grade }}">{{ result.grade }}</span></td>
+                    <td>{{ result.exam_date|date:"M d, Y" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p style="text-align: center; color: #666; padding: 2rem;">No results recorded yet. Start by entering student results!</p>
+    {% endif %}
+</div>
+{% endblock %}

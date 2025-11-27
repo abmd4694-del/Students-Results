@@ -1,0 +1,190 @@
+{% extends 'results/base.html' %}
+
+{% block title %}{% if result %}Edit{% else %}Add{% endif %} Result - Student Result Management System{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-container {
+        max-width: 800px;
+        margin: 2rem auto;
+    }
+
+    .form-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-header {
+        margin-bottom: 2rem;
+    }
+
+    .form-header h1 {
+        color: #667eea;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-header p {
+        color: #666;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #333;
+        font-weight: 600;
+    }
+
+    .form-control, select {
+        width: 100%;
+        padding: 0.8rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+    }
+
+    .form-control:focus, select:focus {
+        outline: none;
+        border-color: #667eea;
+    }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .errorlist {
+        list-style: none;
+        padding: 0;
+        margin: 0.5rem 0 0 0;
+    }
+
+    .errorlist li {
+        color: #dc3545;
+        font-size: 0.9rem;
+    }
+
+    .info-box {
+        background: #e7f3ff;
+        border-left: 4px solid #667eea;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        border-radius: 5px;
+    }
+
+    .info-box p {
+        margin: 0.5rem 0;
+        color: #333;
+        font-size: 0.95rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-card">
+        <div class="form-header">
+            <h1>{% if result %}Edit{% else %}Add New{% endif %} Result</h1>
+            <p>Enter the student's exam result information</p>
+        </div>
+
+        <div class="info-box">
+            <p><strong>ℹ️ Note:</strong></p>
+            <p>• Grade will be automatically calculated based on marks entered</p>
+            <p>• Marks should be between 0 and 100</p>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.student.id_for_label }}">Student *</label>
+                    {{ form.student }}
+                    {% if form.student.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.student.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.course.id_for_label }}">Course *</label>
+                    {{ form.course }}
+                    {% if form.course.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.course.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.marks.id_for_label }}">Marks (0-100) *</label>
+                    {{ form.marks }}
+                    {% if form.marks.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.marks.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.exam_date.id_for_label }}">Exam Date *</label>
+                    {{ form.exam_date }}
+                    {% if form.exam_date.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.exam_date.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.remarks.id_for_label }}">Remarks (Optional)</label>
+                {{ form.remarks }}
+                {% if form.remarks.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.remarks.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">💾 Save Result</button>
+                <a href="{% if result %}{% url 'student_detail' result.student.student_id %}{% else %}{% url 'dashboard' %}{% endif %}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

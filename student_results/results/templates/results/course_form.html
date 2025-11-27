@@ -1,0 +1,168 @@
+{% extends 'results/base.html' %}
+
+{% block title %}{{ action }} Course - Student Result Management System{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-container {
+        max-width: 800px;
+        margin: 2rem auto;
+    }
+
+    .form-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-header {
+        margin-bottom: 2rem;
+    }
+
+    .form-header h1 {
+        color: #667eea;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-header p {
+        color: #666;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #333;
+        font-weight: 600;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.8rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #667eea;
+    }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 120px;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .errorlist {
+        list-style: none;
+        padding: 0;
+        margin: 0.5rem 0 0 0;
+    }
+
+    .errorlist li {
+        color: #dc3545;
+        font-size: 0.9rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-card">
+        <div class="form-header">
+            <h1>{{ action }} Course</h1>
+            <p>Fill in the course information below</p>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.course_code.id_for_label }}">Course Code *</label>
+                    {{ form.course_code }}
+                    {% if form.course_code.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.course_code.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.credits.id_for_label }}">Credits *</label>
+                    {{ form.credits }}
+                    {% if form.credits.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.credits.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.course_name.id_for_label }}">Course Name *</label>
+                {{ form.course_name }}
+                {% if form.course_name.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.course_name.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.semester.id_for_label }}">Semester *</label>
+                {{ form.semester }}
+                {% if form.semester.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.semester.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.description.id_for_label }}">Description *</label>
+                {{ form.description }}
+                {% if form.description.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.description.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">💾 Save Course</button>
+                <a href="{% url 'course_list' %}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

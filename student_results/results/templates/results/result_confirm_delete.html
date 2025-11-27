@@ -1,0 +1,75 @@
+{% extends 'results/base.html' %}
+
+{% block title %}Delete Result - Student Result Management System{% endblock %}
+
+{% block extra_css %}
+<style>
+    .confirm-container {
+        max-width: 600px;
+        margin: 4rem auto;
+    }
+
+    .confirm-card {
+        background: white;
+        border-radius: 15px;
+        padding: 3rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        text-align: center;
+    }
+
+    .warning-icon {
+        font-size: 5rem;
+        margin-bottom: 1rem;
+    }
+
+    .confirm-card h2 {
+        color: #dc3545;
+        margin-bottom: 1rem;
+    }
+
+    .result-info {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin: 2rem 0;
+    }
+
+    .result-info p {
+        color: #333;
+        margin: 0.5rem 0;
+        font-size: 1.1rem;
+    }
+
+    .confirm-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="confirm-container">
+    <div class="confirm-card">
+        <div class="warning-icon">⚠️</div>
+        <h2>Delete Result?</h2>
+        <p style="color: #666; font-size: 1.1rem;">Are you sure you want to delete this result? This action cannot be undone.</p>
+
+        <div class="result-info">
+            <p><strong>Student:</strong> {{ result.student.get_full_name }}</p>
+            <p><strong>Course:</strong> {{ result.course.course_name }}</p>
+            <p><strong>Marks:</strong> {{ result.marks }}/100</p>
+            <p><strong>Grade:</strong> {{ result.grade }}</p>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="confirm-actions">
+                <button type="submit" class="btn btn-danger">🗑️ Yes, Delete</button>
+                <a href="{% url 'student_detail' result.student.student_id %}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

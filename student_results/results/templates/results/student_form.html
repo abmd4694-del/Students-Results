@@ -1,0 +1,215 @@
+{% extends 'results/base.html' %}
+
+{% block title %}{{ action }} Student - Student Result Management System{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-container {
+        max-width: 800px;
+        margin: 2rem auto;
+    }
+
+    .form-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-header {
+        margin-bottom: 2rem;
+    }
+
+    .form-header h1 {
+        color: #667eea;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-header p {
+        color: #666;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #333;
+        font-weight: 600;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.8rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #667eea;
+    }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .errorlist {
+        list-style: none;
+        padding: 0;
+        margin: 0.5rem 0 0 0;
+    }
+
+    .errorlist li {
+        color: #dc3545;
+        font-size: 0.9rem;
+    }
+
+    .helptext {
+        display: block;
+        font-size: 0.9rem;
+        color: #666;
+        margin-top: 0.3rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-card">
+        <div class="form-header">
+            <h1>{{ action }} Student</h1>
+            <p>Fill in the student information below</p>
+        </div>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.student_id.id_for_label }}">Student ID *</label>
+                    {{ form.student_id }}
+                    {% if form.student_id.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.student_id.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.first_name.id_for_label }}">First Name *</label>
+                    {{ form.first_name }}
+                    {% if form.first_name.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.first_name.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.last_name.id_for_label }}">Last Name *</label>
+                    {{ form.last_name }}
+                    {% if form.last_name.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.last_name.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.email.id_for_label }}">Email *</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.email.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.phone.id_for_label }}">Phone *</label>
+                    {{ form.phone }}
+                    {% if form.phone.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.phone.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.date_of_birth.id_for_label }}">Date of Birth *</label>
+                {{ form.date_of_birth }}
+                {% if form.date_of_birth.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.date_of_birth.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.address.id_for_label }}">Address *</label>
+                {{ form.address }}
+                {% if form.address.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.address.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.photo.id_for_label }}">Photo (Optional)</label>
+                {{ form.photo }}
+                {% if form.photo.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.photo.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">💾 Save Student</button>
+                <a href="{% url 'student_list' %}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

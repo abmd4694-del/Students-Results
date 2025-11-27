@@ -1,0 +1,249 @@
+{% extends 'results/base.html' %}
+
+{% block title %}Search Results - Student Result Management System{% endblock %}
+
+{% block extra_css %}
+<style>
+    .search-header {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-header h1 {
+        color: #667eea;
+        margin-bottom: 1rem;
+    }
+
+    .search-box {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .search-input {
+        flex: 1;
+        padding: 1rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        transition: border-color 0.3s;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: #667eea;
+    }
+
+    .search-btn {
+        padding: 1rem 2rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: transform 0.3s;
+    }
+
+    .search-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .results-container {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .results-header {
+        margin-bottom: 1.5rem;
+    }
+
+    .results-header h2 {
+        color: #667eea;
+    }
+
+    .results-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .results-table th {
+        background: #f8f9fa;
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        color: #333;
+        border-bottom: 2px solid #e0e0e0;
+    }
+
+    .results-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .results-table tr:hover {
+        background: #f8f9fa;
+    }
+
+    .grade-badge {
+        display: inline-block;
+        padding: 0.4rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+    }
+
+    .grade-A\+, .grade-A, .grade-A- {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .grade-B\+, .grade-B, .grade-B- {
+        background: #cce5ff;
+        color: #004085;
+    }
+
+    .grade-C\+, .grade-C {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .grade-D, .grade-F {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .no-results {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #666;
+    }
+
+    .no-results-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+    }
+
+    .search-tips {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .search-tips h3 {
+        color: #667eea;
+        margin-bottom: 1rem;
+    }
+
+    .search-tips ul {
+        list-style-position: inside;
+        color: #666;
+        line-height: 1.8;
+    }
+
+    @media (max-width: 768px) {
+        .search-box {
+            flex-direction: column;
+        }
+
+        .results-table {
+            font-size: 0.9rem;
+        }
+
+        .results-table th,
+        .results-table td {
+            padding: 0.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="search-header">
+    <h1>🔍 Search Student Results</h1>
+    <p style="color: #666; margin-bottom: 1.5rem;">Search by student ID, name, course code, or course name</p>
+    
+    <form method="get" action="{% url 'search_results' %}">
+        <div class="search-box">
+            <input 
+                type="text" 
+                name="search" 
+                class="search-input" 
+                placeholder="Enter student ID, name, or course..."
+                value="{{ search_query }}"
+                autofocus
+            >
+            <button type="submit" class="search-btn">🔍 Search</button>
+        </div>
+    </form>
+</div>
+
+{% if search_query %}
+<div class="results-container">
+    <div class="results-header">
+        <h2>Search Results for "{{ search_query }}"</h2>
+        <p style="color: #666;">Found {{ results|length }} result{{ results|length|pluralize }}</p>
+    </div>
+
+    {% if results %}
+    <div style="overflow-x: auto;">
+        <table class="results-table">
+            <thead>
+                <tr>
+                    <th>Student ID</th>
+                    <th>Student Name</th>
+                    <th>Course Code</th>
+                    <th>Course Name</th>
+                    <th>Marks</th>
+                    <th>Grade</th>
+                    <th>Exam Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in results %}
+                <tr>
+                    <td>
+                        <a href="{% url 'student_detail' result.student.student_id %}" 
+                           style="color: #667eea; text-decoration: none; font-weight: 600;">
+                            {{ result.student.student_id }}
+                        </a>
+                    </td>
+                    <td>{{ result.student.get_full_name }}</td>
+                    <td><strong>{{ result.course.course_code }}</strong></td>
+                    <td>{{ result.course.course_name }}</td>
+                    <td>{{ result.marks }}/100</td>
+                    <td><span class="grade-badge grade-{{ result.grade }}">{{ result.grade }}</span></td>
+                    <td>{{ result.exam_date|date:"M d, Y" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="no-results">
+        <div class="no-results-icon">🔍</div>
+        <h3>No Results Found</h3>
+        <p>No results match your search criteria "{{ search_query }}"</p>
+        <p style="margin-top: 1rem;">Try searching with different keywords or student/course information.</p>
+    </div>
+    {% endif %}
+</div>
+{% else %}
+<div class="search-tips">
+    <h3>💡 Search Tips</h3>
+    <ul>
+        <li>Search by <strong>Student ID</strong> for quick lookup (e.g., "S001")</li>
+        <li>Search by <strong>Student Name</strong> (first or last name)</li>
+        <li>Search by <strong>Course Code</strong> to see all results for a course (e.g., "CS101")</li>
+        <li>Search by <strong>Course Name</strong> (e.g., "Mathematics")</li>
+        <li>Results are updated in real-time as teachers enter new grades</li>
+    </ul>
+</div>
+{% endif %}
+{% endblock %}
